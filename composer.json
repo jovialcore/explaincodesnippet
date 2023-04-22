@@ -1,0 +1,17 @@
+{
+    "name": "jovialcore/explain-img-snippet-ai",
+    "description": "Let ai explain code snippets for you",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jovialcore\\ExplainImgSnippetAi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Chidiebere Chukwudi"
+        }
+    ],
+    "require": {}
+}
