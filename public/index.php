@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 use DI\ContainerBuilder;
-use Controller\Aicontroller;
+use ExplainImgSnippetAi\AiController;
 use FastRoute\RouteCollector;
 use Relay\Relay;
 use Laminas\Diactoros\ServerRequestFactory; // more like guzzlehttp client
@@ -15,8 +15,7 @@ use Middlewares\RequestHandler;
 use function Di\create;
 use function FastRoute\simpleDispatcher;
 
-require_once dirname(__DIR__) . '/vendor/autoload';
-
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 $containerBuilder = new  ContainerBuilder();
 $containerBuilder->useAutowiring(false);
@@ -25,22 +24,22 @@ $containerBuilder->useAutowiring(false);
 /// add definitions // register classes so that the DI can automatically create instances of those class in whatever situtatuion (contructor, methods injections, etc) they are called
 $containerBuilder->addDefinitions(
     [
-        Aicontroller::class => create(Aicontroller::class)
+        AiController::class => create(AiController::class)
     ]
 );
 $container = $containerBuilder->build();
 // let Di create the objects aka instantiate
-$extractText = $container->get(\Controller\Aicontroller::class);
+$extractText = $container->get(AiController::class);
 
 
 // defining the routes
 $routes = simpleDispatcher(function (RouteCollector $r) {
-    $r->get('/api/extract/imagetext', Aicontroller::class);
+    $r->get('/api/extract/imagetext', AiController::class);
 });
 
 // the different layers the request coming in has to pass before it gets to the application
 
-$middleware[] = new FastRoute($routes);
-$middleware[] = new RequestHandler();
-$requestHandler = new Relay($middleware);
-$requestHandler->handle(ServerRequestFactory::fromGlobals());
+$middleware[] = new FastRoute($routes); // middleware/layer to match url patterns
+$middleware[] = new RequestHandler(); // middleware/layer to return response from server
+$requestHandler = new Relay($middleware); //  put all the middlewares in the pipeline
+$requestHandler->handle(ServerRequestFactory::fromGlobals()); // pull all middlewares in the pipeline using the current http method returned
