@@ -18,6 +18,7 @@
         "relay/relay": "^2.1",
         "laminas/laminas-diactoros": "^2.25",
         "middlewares/fast-route": "^2.0",
-        "middlewares/request-handler": "^2.0"
+        "middlewares/request-handler": "^2.0",
+        "filp/whoops": "^2.15"
     }
 }
