@@ -12,8 +12,10 @@ use FastRoute\RouteCollector;
 use Relay\Relay;
 use Laminas\Diactoros\ServerRequestFactory; // more like guzzlehttp client
 use FastRoute\SimpleDispatcher;
+use Laminas\Diactoros\Response;
 use Middlewares\FastRoute;
 use Middlewares\RequestHandler;
+use Narrowspark\HttpEmitter\SapiEmitter;
 use Psr\Container\ContainerInterface;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
@@ -31,12 +33,14 @@ $containerBuilder->useAutowiring(false);
 // you can either use factories...I'm using objects below. Reason ebing that it is easier
 $containerBuilder->addDefinitions(
     [
-        AiController::class => create()->constructor('stuff to inject ', get('chatgptapikey'))
+        'response' => function () {
+            return new Response();
+        },
+
+        AiController::class => create()->constructor("I was  injected'", get('response'))
 
     ]
 );
-
-
 
 $container = $containerBuilder->build();
 
@@ -57,4 +61,8 @@ $middleware[] = new FastRoute($routes); // middleware/layer to match url pattern
 // if not for dependency injection, I would have instanciated the AiCOntroller class and pass it on the request handler, but I don't have to cos the DI is handling that
 $middleware[] = new RequestHandler($container); // middleware/layer to return response from server back to the client base on the routing path/specification
 $requestHandler = new Relay($middleware); //  put all the middlewares in the pipeline also know as dispatcher
-$requestHandler->handle(ServerRequestFactory::fromGlobals()); // pull all middlewares in the pipeline using the current http method returned
+$response = $requestHandler->handle(ServerRequestFactory::fromGlobals()); // pull all middlewares in the pipeline using the current http method returned
+
+// emitters: baiscally doing the "header() or echo" but it implements PSR-7
+$emitter = new SapiEmitter();
+return $emitter->emit($response);
