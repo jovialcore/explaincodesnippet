@@ -11,6 +11,7 @@ class AiController
 {
     private $chatgptapikey;
     private $response;
+
     public function __construct(string $chatgptapikey, ResponseInterface $response)
     {
         $this->response = $response;
