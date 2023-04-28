@@ -20,6 +20,7 @@
         "middlewares/fast-route": "^2.0",
         "middlewares/request-handler": "^2.0",
         "filp/whoops": "^2.15",
-        "narrowspark/http-emitter": "^2.0"
+        "narrowspark/http-emitter": "^2.0",
+        "orhanerday/open-ai": "^4.7"
     }
 }

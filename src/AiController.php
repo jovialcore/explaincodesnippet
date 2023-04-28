@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExplainImgSnippetAi;
 
+use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 
 class AiController
@@ -16,12 +17,12 @@ class AiController
         $this->chatgptapikey = $chatgptapikey;
     }
 
-    public function __invoke(): ResponseInterface
-    {
-        $response = $this->response->withHeader('Content-Type', 'text/html');
-        $response->getBody()
-            ->write("<html><head></head><body>Hello, {$this->chatgptapikey} world!</body></html>");
 
-        return $response;
+
+    public function api(): ResponseInterface
+    {
+        $apiKey =  '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';
+        $data =   ['message' => "Hello, {$this->chatgptapikey} world!"];
+        return new JsonResponse($data);
     }
 }

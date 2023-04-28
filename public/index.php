@@ -52,7 +52,7 @@ $whoops->register();
 
 // defining the routes
 $routes = simpleDispatcher(function (RouteCollector $r) {
-    $r->get('/api/extract/imagetext', AiController::class);
+    $r->get('/api/extract/imagetext', [AiController::class, 'api']);
 });
 
 // the different layers the request coming in has to pass before it gets to the application
@@ -60,9 +60,10 @@ $routes = simpleDispatcher(function (RouteCollector $r) {
 $middleware[] = new FastRoute($routes); // middleware/layer to match url patterns
 // if not for dependency injection, I would have instanciated the AiCOntroller class and pass it on the request handler, but I don't have to cos the DI is handling that
 $middleware[] = new RequestHandler($container); // middleware/layer to return response from server back to the client base on the routing path/specification
-$requestHandler = new Relay($middleware); //  put all the middlewares in the pipeline also know as dispatcher
+$requestHandler = new Relay($middleware); //  put all the middlewares in the pipeline also know as dispatcher //also known as middleware dispatcher
+
 $response = $requestHandler->handle(ServerRequestFactory::fromGlobals()); // pull all middlewares in the pipeline using the current http method returned
 
 // emitters: baiscally doing the "header() or echo" but it implements PSR-7
 $emitter = new SapiEmitter();
-return $emitter->emit($response);
+return $emitter->emit($response); // send response
