@@ -6,6 +6,7 @@ namespace ExplainImgSnippetAi;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
+use Orhanerday\OpenAi\OpenAi;
 
 class AiController
 {
@@ -22,8 +23,11 @@ class AiController
 
     public function api(): ResponseInterface
     {
-        $apiKey =  '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';
         $data =   ['message' => "Hello, {$this->chatgptapikey} world!"];
+
+        $openaikey = getenv('OPENAI_API_KEY');
+        dd($openaikey);
+
         return new JsonResponse($data);
     }
 }

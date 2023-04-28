@@ -21,6 +21,10 @@
         "middlewares/request-handler": "^2.0",
         "filp/whoops": "^2.15",
         "narrowspark/http-emitter": "^2.0",
-        "orhanerday/open-ai": "^4.7"
+        "orhanerday/open-ai": "^4.7",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.2"
     }
 }

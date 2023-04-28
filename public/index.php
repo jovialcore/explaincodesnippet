@@ -20,9 +20,22 @@ use Psr\Container\ContainerInterface;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
 
+use Dotenv\Dotenv;
+
 use function Di\create;
 use function Di\get;
+
 use function FastRoute\simpleDispatcher;
+
+$whoops = new Run(); // do dependency injection here
+$whoops->pushHandler(new PrettyPageHandler());
+$whoops->register();
+
+// load environmental vars
+$dotenv  = Dotenv::createUnsafeImmutable(__DIR__ . '/../'); //more info : https://dev.to/walternascimentobarroso/dotenv-in-php-45mn /// I can't use createImmutable because I think my php.ini settings will now allow me use $_ENV()
+$dotenv->load();
+
+// add your containers
 
 $containerBuilder = new  ContainerBuilder();
 $containerBuilder->useAutowiring(false);
@@ -44,11 +57,6 @@ $containerBuilder->addDefinitions(
 
 $container = $containerBuilder->build();
 
-
-
-$whoops = new Run();
-$whoops->pushHandler(new PrettyPageHandler());
-$whoops->register();
 
 // defining the routes
 $routes = simpleDispatcher(function (RouteCollector $r) {
