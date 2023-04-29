@@ -26,7 +26,7 @@ class AiController
         $data =   ['message' => "Hello, {$this->chatgptapikey} world!"];
 
         $openaikey = getenv('OPENAI_API_KEY');
-        dd($openaikey);
+
 
         return new JsonResponse($data);
     }

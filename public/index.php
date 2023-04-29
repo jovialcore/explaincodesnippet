@@ -26,7 +26,7 @@ use function Di\create;
 use function Di\get;
 
 use function FastRoute\simpleDispatcher;
-
+// error debug
 $whoops = new Run(); // do dependency injection here
 $whoops->pushHandler(new PrettyPageHandler());
 $whoops->register();
