@@ -24,7 +24,8 @@
         "orhanerday/open-ai": "^4.7",
         "vlucas/phpdotenv": "^5.5",
         "thiagoalessio/tesseract_ocr": "^2.12",
-        "intervention/image": "^2.7"
+        "intervention/image": "^2.7",
+        "aws/aws-sdk-php": "^3.269"
        
     },
     "require-dev": {
