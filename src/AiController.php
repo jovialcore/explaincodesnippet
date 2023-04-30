@@ -29,7 +29,8 @@ class AiController
             'credentials' => [
                 'key'    => getenv('AWS_KEY'),
                 'secret' => getenv('AWS_SECRET')
-            ]
+            ],
+            'scheme' => 'https',
         ]);
         $data =   ['message' => "Hello, {$this->chatgptapikey} world!"];
 
