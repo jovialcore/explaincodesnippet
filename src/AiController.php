@@ -10,6 +10,8 @@ use Orhanerday\OpenAi\OpenAi;
 use Aws\Textract\TextractClient;
 use Aws\Textract\Exception\TextractException;
 
+use Laminas\Diactoros\ServerRequestFactory;
+
 class AiController
 {
     private $chatgptapikey;
@@ -19,10 +21,20 @@ class AiController
     {
         $this->response = $response;
         $this->chatgptapikey = $chatgptapikey;
+
+
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization");
     }
 
     public function api(): ResponseInterface
     {
+        $request = ServerRequestFactory::fromGlobals();
+
+        // Get the uploaded file from the request
+        $file = $request->getUploadedFiles()['image'];
+        dd($file);
         $textractClient = new TextractClient([
             'version' => 'latest',
             'region' => getenv('AWS_REGION'),
@@ -37,7 +49,7 @@ class AiController
         try {
             $result = $textractClient->detectDocumentText([
                 'Document' => [
-                    'Bytes' => file_get_contents('/opt/lampp/htdocs/Projects/explain-img-snippet-ai/src/code.png')
+                    'Bytes' => file_get_contents('/opt/lampp/htdocs/Projects/explain-img-snippet-ai/src/Snap.png')
                 ]
             ]);
 

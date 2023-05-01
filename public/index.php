@@ -10,8 +10,11 @@ use DI\ContainerBuilder;
 use ExplainImgSnippetAi\AiController;
 use FastRoute\RouteCollector;
 use Relay\Relay;
-use Laminas\Diactoros\ServerRequestFactory; // more like guzzlehttp client
-use FastRoute\SimpleDispatcher;
+use Laminas\Diactoros\ServerRequestFactory; // more like guzzlehttp client ---update: it is not
+
+
+use Laminas\Diactoros\Request;
+
 use Laminas\Diactoros\Response;
 use Middlewares\FastRoute;
 use Middlewares\RequestHandler;
@@ -26,6 +29,7 @@ use function Di\create;
 use function Di\get;
 
 use function FastRoute\simpleDispatcher;
+
 // error debug
 $whoops = new Run(); // do dependency injection here
 $whoops->pushHandler(new PrettyPageHandler());
@@ -50,7 +54,8 @@ $containerBuilder->addDefinitions(
             return new Response();
         },
 
-        AiController::class => create()->constructor("I was  injected'", get('response'))
+        AiController::class => create()->constructor("I was  injected'", get('response')),
+
 
     ]
 );
@@ -60,7 +65,7 @@ $container = $containerBuilder->build();
 
 // defining the routes
 $routes = simpleDispatcher(function (RouteCollector $r) {
-    $r->get('/api/extract/imagetext', [AiController::class, 'api']);
+    $r->post('/api/extract/imagetext', [AiController::class, 'api']);
 });
 
 // the different layers the request coming in has to pass before it gets to the application
