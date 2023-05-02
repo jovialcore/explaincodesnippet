@@ -21,20 +21,19 @@ class AiController
     {
         $this->response = $response;
         $this->chatgptapikey = $chatgptapikey;
-
-
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
     }
 
     public function api(): ResponseInterface
     {
         $request = ServerRequestFactory::fromGlobals();
 
+
+
+
         // Get the uploaded file from the request
         $file = $request->getUploadedFiles()['image'];
-        dd($file);
+
+
         $textractClient = new TextractClient([
             'version' => 'latest',
             'region' => getenv('AWS_REGION'),
@@ -44,21 +43,23 @@ class AiController
             ],
             'scheme' => 'https',
         ]);
+
         $data =   ['message' => "Hello, {$this->chatgptapikey} world!"];
 
         try {
             $result = $textractClient->detectDocumentText([
                 'Document' => [
-                    'Bytes' => file_get_contents('/opt/lampp/htdocs/Projects/explain-img-snippet-ai/src/Snap.png')
+                    'Bytes' => file_get_contents($file->getStream()->getMetadata('uri'))
                 ]
             ]);
 
+            $arr = [];
             foreach ($result->get('Blocks') as $block) {
                 if ($block['BlockType'] != 'WORD') {
                     continue;
                 }
 
-                echo $block['Text'] . " ";
+                dd($block['Text'] . " ");
             }
         } catch (TextractException $e) {
             // output error message if fails
@@ -66,6 +67,30 @@ class AiController
         }
 
         $openaikey = getenv('OPENAI_API_KEY');
+
+        $open_ai = new OpenAi($openaikey);
+
+        $chat =  $open_ai->chat([
+            'model' => 'gpt-3.5-turbo',
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => "You are a helpful code assistant",
+                ],
+
+                [
+                    'role' => 'user',
+                    'content' => "With your recent knowledge cutoff mark, explain this code in the latest information",
+                ],
+
+                'temperature' => 1.0,
+                'max_tokens' => 4000,
+                'frequency_penalty' => 0,
+                'presence_penalty' => 0,
+            ]
+        ]);
+
+
 
 
         return new JsonResponse($data);

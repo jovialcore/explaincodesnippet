@@ -30,6 +30,8 @@ use function Di\get;
 
 use function FastRoute\simpleDispatcher;
 
+// for Cors
+header("Access-Control-Allow-Origin: *");
 // error debug
 $whoops = new Run(); // do dependency injection here
 $whoops->pushHandler(new PrettyPageHandler());
@@ -55,8 +57,6 @@ $containerBuilder->addDefinitions(
         },
 
         AiController::class => create()->constructor("I was  injected'", get('response')),
-
-
     ]
 );
 
