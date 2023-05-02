@@ -27,9 +27,6 @@ class AiController
     {
         $request = ServerRequestFactory::fromGlobals();
 
-
-
-
         // Get the uploaded file from the request
         $file = $request->getUploadedFiles()['image'];
 
@@ -53,14 +50,16 @@ class AiController
                 ]
             ]);
 
-            $arr = [];
+            $arr = "";
             foreach ($result->get('Blocks') as $block) {
                 if ($block['BlockType'] != 'WORD') {
                     continue;
                 }
 
-                dd($block['Text'] . " ");
+                $arr = $arr . $block['Text'] . " ";
             }
+
+            dd($arr);
         } catch (TextractException $e) {
             // output error message if fails
             echo $e->getMessage();
