@@ -21,10 +21,49 @@ class AiController
     {
         $this->response = $response;
         $this->chatgptapikey = $chatgptapikey;
+
+        $originalString = "
+        ```
+         This code is defining a PHP class with three properties: chatgptapikey, response, and a constructor method. 
+         
+         The chatgptapikey property is declared as private, meaning it can only be accessed within the class itself. 
+         
+         The response property is also declared as private and is expected to be an instance of the ResponseInterface class.
+         
+         The constructor method is declared as public. It takes in two parameters, a string chatgptapikey and an instance of the ResponseInterface class. 
+         
+         Within the constructor method, the response property is assigned the value of the response parameter. The chatgptapikey property is also assigned the value of the chatgptapikey parameter.
+         
+         Proper format code:
+         
+         ```
+         class ExampleClass 
+         {
+             private chatgptapikey;
+             private response;
+         
+             public function __construct(string chatgptapikey, ResponseInterface response)
+             {
+                  = response;
+                 = chatgptapikey;
+             }
+         }
+         ```
+         ";
+
+
+
+        $substring = substr($originalString, strpos($originalString, "Proper format code"));
+
+        if ($substring !== false) {
+            dd($substring);
+        }
     }
 
     public function api(): ResponseInterface
     {
+
+
         $request = ServerRequestFactory::fromGlobals();
 
         // Get the uploaded file from the request
@@ -69,10 +108,10 @@ class AiController
         $chat =   $open_ai->chat([
             'model' => 'gpt-3.5-turbo',
             'messages' => [
- 
+
                 [
                     "role" => "user",
-                    "content" => "Explain this code $: '$words' return it in a proper format "
+                    "content" => "Explain this code '$words' and start with 'Explanation: //explanation should be her/next'. The return code in a proper format and start with 'code : //the code should be here/next' "
                 ],
             ],
             'temperature' => 1.0,
@@ -83,10 +122,13 @@ class AiController
 
 
         // decode response
-        // $d = json_decode($chat);
+        $d = json_decode($chat);
 
         // Get Content
-        dd($chat);
-        // return new JsonResponse($data);
+        $result = $d->choices[0]->message->content;
+
+        $code = substr($result, strpos($result, "Proper format code"));
+        $explanationStart = substr($result, strpos($result, 'Explanation'));
+        $explanationEnd = substr($result, strpos($result, 'Explanation'));
     }
 }
