@@ -30,7 +30,6 @@ class AiController
         // Get the uploaded file from the request
         $file = $request->getUploadedFiles()['image'];
 
-
         $textractClient = new TextractClient([
             'version' => 'latest',
             'region' => getenv('AWS_REGION'),
@@ -41,7 +40,7 @@ class AiController
             'scheme' => 'https',
         ]);
 
-        $data =   ['message' => "Hello, {$this->chatgptapikey} world!"];
+
 
         try {
             $result = $textractClient->detectDocumentText([
@@ -50,16 +49,14 @@ class AiController
                 ]
             ]);
 
-            $arr = "";
+            $words = "";
             foreach ($result->get('Blocks') as $block) {
                 if ($block['BlockType'] != 'WORD') {
                     continue;
                 }
 
-                $arr = $arr . $block['Text'] . " ";
+                $words = $words . $block['Text'] . " ";
             }
-
-            dd($arr);
         } catch (TextractException $e) {
             // output error message if fails
             echo $e->getMessage();
@@ -69,29 +66,27 @@ class AiController
 
         $open_ai = new OpenAi($openaikey);
 
-        $chat =  $open_ai->chat([
+        $chat =   $open_ai->chat([
             'model' => 'gpt-3.5-turbo',
             'messages' => [
+ 
                 [
-                    'role' => 'system',
-                    'content' => "You are a helpful code assistant",
+                    "role" => "user",
+                    "content" => "Explain this code $: '$words' return it in a proper format "
                 ],
-
-                [
-                    'role' => 'user',
-                    'content' => "With your recent knowledge cutoff mark, explain this code in the latest information",
-                ],
-
-                'temperature' => 1.0,
-                'max_tokens' => 4000,
-                'frequency_penalty' => 0,
-                'presence_penalty' => 0,
-            ]
+            ],
+            'temperature' => 1.0,
+            'max_tokens' => 4000,
+            'frequency_penalty' => 0,
+            'presence_penalty' => 0,
         ]);
 
 
+        // decode response
+        // $d = json_decode($chat);
 
-
-        return new JsonResponse($data);
+        // Get Content
+        dd($chat);
+        // return new JsonResponse($data);
     }
 }
