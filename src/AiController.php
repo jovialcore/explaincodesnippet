@@ -22,9 +22,9 @@ class AiController
         $this->response = $response;
         $this->chatgptapikey = $chatgptapikey;
 
-        $originalString = "
+        $result = "
         ```
-         This code is defining a PHP class with three properties: chatgptapikey, response, and a constructor method. 
+         Explanation: This code is defining a PHP class with three properties: chatgptapikey, response, and a constructor method. 
          
          The chatgptapikey property is declared as private, meaning it can only be accessed within the class itself. 
          
@@ -34,7 +34,7 @@ class AiController
          
          Within the constructor method, the response property is assigned the value of the response parameter. The chatgptapikey property is also assigned the value of the chatgptapikey parameter.
          
-         Proper format code:
+         Code:
          
          ```
          class ExampleClass 
@@ -51,13 +51,7 @@ class AiController
          ```
          ";
 
-
-
-        $substring = substr($originalString, strpos($originalString, "Proper format code"));
-
-        if ($substring !== false) {
-            dd($substring);
-        }
+    
     }
 
     public function api(): ResponseInterface
@@ -111,10 +105,10 @@ class AiController
 
                 [
                     "role" => "user",
-                    "content" => "Explain this code '$words' and start with 'Explanation: //explanation should be her/next'. The return code in a proper format and start with 'code : //the code should be here/next' "
+                    "content" => "Explain this code '$words' and start with 'Explanation: //let explanation be here for example '. Then return code in a proper format and start with 'code : //the code should be here/next' "
                 ],
             ],
-            
+
             'temperature' => 1.0,
             'max_tokens' => 4000,
             'frequency_penalty' => 0,
@@ -128,8 +122,12 @@ class AiController
         // Get Content
         $result = $d->choices[0]->message->content;
 
-        $code = substr($result, strpos($result, "Proper format code"));
-        $explanationStart = substr($result, strpos($result, 'Explanation'));
-        $explanationEnd = substr($result, strpos($result, 'Explanation'));
+        $code = substr($result, strpos($result, "Code:"));
+        $explanationStart =  strpos($result, 'Explanation');
+        $explanationEnd = strpos($result, 'Code:');
+
+        $explanation = substr($result, $explanationStart, $explanationEnd - $explanationStart);
+
+        dd($explanation);
     }
 }
