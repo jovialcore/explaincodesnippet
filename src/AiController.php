@@ -114,6 +114,7 @@ class AiController
                     "content" => "Explain this code '$words' and start with 'Explanation: //explanation should be her/next'. The return code in a proper format and start with 'code : //the code should be here/next' "
                 ],
             ],
+            
             'temperature' => 1.0,
             'max_tokens' => 4000,
             'frequency_penalty' => 0,
