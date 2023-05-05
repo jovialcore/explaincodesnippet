@@ -21,40 +21,9 @@ class AiController
     {
         $this->response = $response;
         $this->chatgptapikey = $chatgptapikey;
-
-        $result = "
-        ```
-         Explanation: This code is defining a PHP class with three properties: chatgptapikey, response, and a constructor method. 
-         
-         The chatgptapikey property is declared as private, meaning it can only be accessed within the class itself. 
-         
-         The response property is also declared as private and is expected to be an instance of the ResponseInterface class.
-         
-         The constructor method is declared as public. It takes in two parameters, a string chatgptapikey and an instance of the ResponseInterface class. 
-         
-         Within the constructor method, the response property is assigned the value of the response parameter. The chatgptapikey property is also assigned the value of the chatgptapikey parameter.
-         
-         Code:
-         
-         ```
-         class ExampleClass 
-         {
-             private chatgptapikey;
-             private response;
-         
-             public function __construct(string chatgptapikey, ResponseInterface response)
-             {
-                  = response;
-                 = chatgptapikey;
-             }
-         }
-         ```
-         ";
-
-    
     }
 
-    public function api(): ResponseInterface
+    public function api()
     {
 
 
@@ -105,22 +74,21 @@ class AiController
 
                 [
                     "role" => "user",
-                    "content" => "Explain this code '$words' and start with 'Explanation: //let explanation be here for example '. Then return code in a proper format and start with 'code : //the code should be here/next' "
+                    "content" => "Explain this code '$words' "
                 ],
             ],
 
-            'temperature' => 1.0,
-            'max_tokens' => 4000,
-            'frequency_penalty' => 0,
-            'presence_penalty' => 0,
+
+
         ]);
 
-
+        // dd($chat);
         // decode response
         $d = json_decode($chat);
 
-        // Get Content
-        $result = $d->choices[0]->message->content;
 
+        $r = $d->choices[0]->message->content;
+
+        return new JsonResponse(['data' => $r], 200);
     }
 }
