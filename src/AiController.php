@@ -122,12 +122,5 @@ class AiController
         // Get Content
         $result = $d->choices[0]->message->content;
 
-        $code = substr($result, strpos($result, "Code:"));
-        $explanationStart =  strpos($result, 'Explanation');
-        $explanationEnd = strpos($result, 'Code:');
-
-        $explanation = substr($result, $explanationStart, $explanationEnd - $explanationStart);
-
-        dd($explanation);
     }
 }
