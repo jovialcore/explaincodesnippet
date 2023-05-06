@@ -90,6 +90,6 @@ class AiController
 
             return new JsonResponse(['data' => $r], 200);
         }
-        return new JsonResponse(['error' => 'Sorrry, there was some error with the upload'], 422);
+        return new JsonResponse(['error' => 'Sorrry, there was some error with the upload or image extension is not supported'], 422);
     }
 }
