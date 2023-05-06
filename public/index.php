@@ -38,7 +38,7 @@ $whoops->pushHandler(new PrettyPageHandler());
 $whoops->register();
 
 // load environmental vars
-$dotenv  = Dotenv::createUnsafeImmutable(__DIR__ . '/../'); //more info : https://dev.to/walternascimentobarroso/dotenv-in-php-45mn /// I can't use createImmutable because I think my php.ini settings will now allow me use $_ENV()
+$dotenv  = Dotenv::createUnsafeImmutable(__DIR__ . '/../'); //more info : https://dev.to/walternascimentobarroso/dotenv-in-php-45mn /
 $dotenv->load();
 
 // add your containers

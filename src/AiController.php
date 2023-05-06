@@ -26,69 +26,70 @@ class AiController
     public function api()
     {
 
-
         $request = ServerRequestFactory::fromGlobals();
 
         // Get the uploaded file from the request
         $file = $request->getUploadedFiles()['image'];
+        $extension = pathinfo($file->getClientFilename(), PATHINFO_EXTENSION);
 
-        $textractClient = new TextractClient([
-            'version' => 'latest',
-            'region' => getenv('AWS_REGION'),
-            'credentials' => [
-                'key'    => getenv('AWS_KEY'),
-                'secret' => getenv('AWS_SECRET')
-            ],
-            'scheme' => 'https',
-        ]);
+        if ($file !== null && $file->getError() !== \UPLOAD_ERR_NO_FILE && in_array($extension, ['jpeg', 'png', 'jpg', 'webp', 'svg', 'tiff', 'tif', 'bmp', 'svgz'])) {
 
 
-
-        try {
-            $result = $textractClient->detectDocumentText([
-                'Document' => [
-                    'Bytes' => file_get_contents($file->getStream()->getMetadata('uri'))
-                ]
+            $textractClient = new TextractClient([
+                'version' => 'latest',
+                'region' => getenv('AWS_REGION'),
+                'credentials' => [
+                    'key'    => getenv('AWS_KEY'),
+                    'secret' => getenv('AWS_SECRET')
+                ],
+                'scheme' => 'https',
             ]);
 
-            $words = "";
-            foreach ($result->get('Blocks') as $block) {
-                if ($block['BlockType'] != 'WORD') {
-                    continue;
+
+            try {
+                $result = $textractClient->detectDocumentText([
+                    'Document' => [
+                        'Bytes' => file_get_contents($file->getStream()->getMetadata('uri'))
+                    ]
+                ]);
+
+                $words = "";
+                foreach ($result->get('Blocks') as $block) {
+                    if ($block['BlockType'] != 'WORD') {
+                        continue;
+                    }
+
+                    $words = $words . $block['Text'] . " ";
                 }
-
-                $words = $words . $block['Text'] . " ";
+            } catch (TextractException $e) {
+                // output error message if fails
+                return new  JsonResponse(['error' => $e->getMessage()]);
             }
-        } catch (TextractException $e) {
-            // output error message if fails
-            echo $e->getMessage();
-        }
 
-        $openaikey = getenv('OPENAI_API_KEY');
+            $openaikey = getenv('OPENAI_API_KEY');
 
-        $open_ai = new OpenAi($openaikey);
+            $open_ai = new OpenAi($openaikey);
 
-        $chat =   $open_ai->chat([
-            'model' => 'gpt-3.5-turbo',
-            'messages' => [
+            $chat =   $open_ai->chat([
+                'model' => 'gpt-3.5-turbo',
+                'messages' => [
 
-                [
-                    "role" => "user",
-                    "content" => "Explain this code '$words' "
+                    [
+                        "role" => "user",
+                        "content" => "Explain this code '$words' "
+                    ],
                 ],
-            ],
+
+            ]);
 
 
-
-        ]);
-
-        // dd($chat);
-        // decode response
-        $d = json_decode($chat);
+            $d = json_decode($chat);
 
 
-        $r = $d->choices[0]->message->content;
+            $r = $d->choices[0]->message->content;
 
-        return new JsonResponse(['data' => $r], 200);
+            return new JsonResponse(['data' => $r], 200);
+        }
+        return new JsonResponse(['error' => 'Sorrry, there was some error with the upload'], 422);
     }
 }
