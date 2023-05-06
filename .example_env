@@ -1,1 +1,8 @@
 OPENAI_API_KEY="Your Open Ai key"
+
+
+#aws credentials
+
+AWS_KEY = 'your aws key'
+AWS_SECRET = 'your aws secret'
+AWS_REGION = "us-east-1" // you cann add your region

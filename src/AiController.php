@@ -82,9 +82,7 @@ class AiController
 
             ]);
 
-
             $d = json_decode($chat);
-
 
             $r = $d->choices[0]->message->content;
 
